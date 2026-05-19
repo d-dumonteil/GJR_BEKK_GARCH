@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from statsmodels.tsa.api import VAR
 import cvxpy as cp
+import matplotlib.dates as mdates
 
 # --- Configuration Globale ---
 RF_ANNUAL_LOG = np.log(1 + 0.03)
@@ -276,6 +277,9 @@ def main():
     A, B, C, G = data["A"], data["B"], data["C"], data["G"]
     H_train  = list(data["H_train"])
     n_dims   = int(data["n_dims"])
+    dates = data["dates"]
+    dates = np.array(dates, dtype="datetime64[ns]")
+    dates = dates[-test_size:]
 
     choice = input("Stratégie (allin/regu/onlyregu) : ").strip().lower()
     initial_total = 10_000
@@ -299,11 +303,14 @@ def main():
         print("Choix invalide.")
         return
 
+    plt.gca().xaxis.set_major_locator(mdates.MonthLocator(interval=3))
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+    plt.gcf().autofmt_xdate()
     plt.figure(figsize=(12, 6))
     for j, (serie, label) in enumerate(zip(series, labels)):
         s = realized_sharpe_from_portfolio_values(serie) if j < 4 else 0
         suffix = f" (S={s:.2f})" if j < 4 else ""
-        plt.plot(serie, label=f"{label}{suffix}")
+        plt.plot(dates, serie, label=f"{label}{suffix}")
 
     plt.title(f"Backtest Portfolio - {choice.upper()}")
     plt.legend()
