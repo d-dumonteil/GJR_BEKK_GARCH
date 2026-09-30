@@ -1,0 +1,15 @@
+# Données et résultats de calculs
+*.npz
+*.npy
+*.csv
+data/
+results/
+
+# Caches et environnements Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ipynb_checkpoints/
+.DS_Store
